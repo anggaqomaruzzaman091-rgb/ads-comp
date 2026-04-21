@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADS Analisis — Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --teal: #028090;
+      --teal-dark: #01566B;
+      --teal-light: #E1F5EE;
+      --seafoam: #00A896;
+      --mint: #02C39A;
+      --bg-dark: #0B2B32;
+      --bg-darker: #06191D;
+      --bg-page: #F7FAFB;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F0F7F8;
+      --text-dark: #0F1E22;
+      --text-mid: #3D5A60;
+      --text-mute: #7B9198;
+      --border: #E4ECED;
+      --border-hover: #D0DCDE;
+      --danger: #A32D2D;
+      --danger-bg: #FCEBEB;
+      --warning: #854F0B;
+      --warning-bg: #FAEEDA;
+      --info: #185FA5;
+      --info-bg: #E6F1FB;
+      --success: #0F6E56;
+      --success-bg: #E1F5EE;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg-page);
+      color: var(--text-dark);
+      font-size: 14px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ======================= SIDEBAR ======================= */
+    .sidebar {
+      width: 240px;
+      background: var(--bg-dark);
+      color: #FFFFFF;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-section {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-box {
+      width: 36px;
+      height: 36px;
+      background: var(--teal);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-weight: 500;
+      font-size: 16px;
+      color: #FFFFFF;
+    }
+
+    .logo-subtitle {
+      font-size: 10px;
+      color: var(--text-mute);
+    }
+
+    .nav-section {
+      padding: 16px 12px;
+      flex: 1;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-mute);
+      padding: 0 12px 8px;
+      font-weight: 500;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      color: #B4B2A9;
+      text-decoration: none;
+      font-size: 13px;
+      border-radius: 6px;
+      margin-bottom: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #FFFFFF;
+    }
+
+    .nav-item.active {
+      background: rgba(2, 195, 154, 0.15);
+      color: var(--mint);
+      font-weight: 500;
+    }
+
+    .nav-item .icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      stroke-width: 2;
+    }
+
+    .nav-item.ai-item {
+      background: rgba(2, 195, 154, 0.08);
+      color: var(--mint);
+      border: 0.5px solid rgba(2, 195, 154, 0.3);
+    }
+
+    .nav-item.ai-item:hover {
+      background: rgba(2, 195, 154, 0.15);
+    }
+
+    .ai-badge {
+      margin-left: auto;
+      font-size: 9px;
+      background: var(--mint);
+      color: var(--bg-dark);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-footer {
+      padding: 12px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--seafoam);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .user-name {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .user-role {
+      font-size: 10px;
+      color: var(--text-mute);
+    }
+
+    /* ======================= MAIN CONTENT ======================= */
+    .main {
+      flex: 1;
+      padding: 20px 24px;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-left h1 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .topbar-left p {
+      font-size: 12px;
+      color: var(--text-mute);
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: var(--bg-card);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      min-width: 200px;
+      font-size: 12px;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 12px;
+      background: transparent;
+      color: var(--text-dark);
+    }
+
+    .btn {
+      padding: 7px 13px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 0.5px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-dark);
+      transition: all 0.15s;
+    }
+
+    .btn:hover {
+      border-color: var(--border-hover);
+      background: var(--bg-subtle);
+    }
+
+    .btn.primary {
+      background: var(--teal);
+      color: #FFFFFF;
+      border-color: var(--teal);
+    }
+
+    .btn.primary:hover {
+      background: var(--teal-dark);
+      border-color: var(--teal-dark);
+    }
+
+    .btn.icon-only {
+      padding: 7px 9px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      padding: 8px;
+      background: var(--bg-card);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+    }
+
+    /* ======================= METRIC CARDS ======================= */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .metric-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .metric-icon.teal {
+      background: var(--teal-light);
+    }
+
+    .metric-icon.mint {
+      background: rgba(2, 195, 154, 0.15);
+    }
+
+    .metric-icon.info {
+      background: var(--info-bg);
+    }
+
+    .metric-icon.warn {
+      background: var(--warning-bg);
+    }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-mute);
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .metric-change {
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .metric-change.up {
+      color: var(--success);
+    }
+
+    .metric-change.down {
+      color: var(--danger);
+    }
+
+    /* ======================= CONTENT GRID ======================= */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .content-grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .panel.dark {
+      background: var(--bg-dark);
+      border-color: var(--bg-dark);
+      color: #FFFFFF;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 8px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title h3 {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .panel-title p {
+      font-size: 11px;
+      color: var(--text-mute);
+      margin-top: 2px;
+    }
+
+    .panel.dark .panel-title h3 {
+      color: #FFFFFF;
+    }
+
+    .panel.dark .panel-title p {
+      color: var(--text-mute);
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-mute);
+    }
+
+    .badge {
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .badge.teal {
+      background: var(--teal-light);
+      color: var(--teal-dark);
+    }
+
+    .badge.mint {
+      background: rgba(2, 195, 154, 0.15);
+      color: var(--mint);
+    }
+
+    .badge.warn {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .badge.danger {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .badge.success {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge.info {
+      background: var(--info-bg);
+      color: var(--info);
+    }
+
+    /* ======================= CHART ======================= */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 220px;
+    }
+
+    .legend-row {
+      display: flex;
+      gap: 14px;
+      font-size: 11px;
+      color: var(--text-mute);
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    /* ======================= TOP PRODUCTS ======================= */
+    .product-row {
+      margin-bottom: 12px;
+    }
+
+    .product-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .product-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .product-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .product-meta {
+      font-size: 10px;
+      color: var(--text-mute);
+    }
+
+    .product-value {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--teal);
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: var(--bg-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--teal);
+      border-radius: 4px;
+    }
+
+    .progress-fill.mint {
+      background: var(--mint);
+    }
+
+    /* ======================= STOCK ALERTS ======================= */
+    .alert-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 11px;
+      border-radius: 6px;
+      margin-bottom: 7px;
+    }
+
+    .alert-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .alert-item.critical {
+      background: var(--danger-bg);
+    }
+
+    .alert-item.warning {
+      background: var(--warning-bg);
+    }
+
+    .alert-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .alert-detail {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .alert-item.critical .alert-detail {
+      color: var(--danger);
+    }
+
+    .alert-item.warning .alert-detail {
+      color: var(--warning);
+    }
+
+    .alert-qty {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .alert-item.critical .alert-qty {
+      color: var(--danger);
+    }
+
+    .alert-item.warning .alert-qty {
+      color: var(--warning);
+    }
+
+    /* ======================= AI INSIGHTS ======================= */
+    .insight-item {
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 3px solid;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 8px;
+    }
+
+    .insight-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .insight-item.rec {
+      border-color: var(--mint);
+    }
+
+    .insight-item.warn {
+      border-color: #EF9F27;
+    }
+
+    .insight-item.pred {
+      border-color: #85B7EB;
+    }
+
+    .insight-label {
+      font-size: 10px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      letter-spacing: 0.8px;
+    }
+
+    .insight-item.rec .insight-label {
+      color: var(--mint);
+    }
+
+    .insight-item.warn .insight-label {
+      color: #EF9F27;
+    }
+
+    .insight-item.pred .insight-label {
+      color: #85B7EB;
+    }
+
+    .insight-text {
+      font-size: 12px;
+      color: #FFFFFF;
+      line-height: 1.55;
+    }
+
+    /* ======================= RECENT ORDERS TABLE ======================= */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .table thead th {
+      text-align: left;
+      padding: 9px 12px;
+      font-weight: 500;
+      color: var(--text-mute);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 0.5px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .table tbody td {
+      padding: 12px;
+      border-bottom: 0.5px solid var(--border);
+      color: var(--text-dark);
+      white-space: nowrap;
+    }
+
+    .table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tbody tr:hover {
+      background: var(--bg-subtle);
+    }
+
+    .customer-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .customer-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    /* ======================= CHAT AI ======================= */
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .msg {
+      max-width: 85%;
+      padding: 9px 12px;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: var(--teal);
+      color: #FFFFFF;
+      border-radius: 10px 10px 2px 10px;
+    }
+
+    .msg.ai {
+      background: var(--bg-subtle);
+      color: var(--text-dark);
+      border-radius: 2px 10px 10px 10px;
+    }
+
+    .msg.ai .highlight {
+      font-weight: 500;
+      color: var(--teal);
+    }
+
+    .ai-msg-wrapper {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+    }
+
+    .ai-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 500;
+      font-size: 9px;
+      flex-shrink: 0;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 6px;
+      padding-top: 12px;
+      border-top: 0.5px solid var(--border);
+    }
+
+    .chat-input input {
+      flex: 1;
+      font-size: 12px;
+      padding: 8px 12px;
+      border: 0.5px solid var(--border-hover);
+      border-radius: 7px;
+      background: var(--bg-page);
+      color: var(--text-dark);
+      outline: none;
+    }
+
+    .chat-input input:focus {
+      border-color: var(--teal);
+    }
+
+    /* ======================= RESPONSIVE ======================= */
+    @media (max-width: 1100px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content-grid-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        z-index: 100;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+
+      .main {
+        padding: 16px;
+      }
+
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .metric-card {
+        padding: 12px 14px;
+      }
+
+      .metric-value {
+        font-size: 20px;
+      }
+
+      .topbar {
+        margin-bottom: 16px;
+      }
+
+      .topbar-left h1 {
+        font-size: 18px;
+      }
+
+      .search-box {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .chart-container {
+        height: 180px;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 99;
+      }
+
+      .sidebar-overlay.open {
+        display: block;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .topbar-right {
+        width: 100%;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .btn span.label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <div class="app">
+
+    <!-- =========== SIDEBAR =========== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo-section">
+        <div class="logo-box">ADS</div>
+        <div>
+          <div class="logo-text">ADS Analisis</div>
+          <div class="logo-subtitle">Asisten Bisnis AI</div>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Menu Utama</div>
+
+        <a class="nav-item active">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20 7h-4V3H8v4H4l8 10 8-10z" />
+            <path d="M4 21h16" />
+          </svg>
+          <span>Produk</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+          <span>Pembelian</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+          <span>Supplier</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
+          <span>Penjualan</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Pelanggan</span>
+        </a>
+
+        <div class="nav-label" style="margin-top: 18px;">Keuangan</div>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          <span>Transaksi Keuangan</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span>Pengeluaran</span>
+        </a>
+
+        <div class="nav-label" style="margin-top: 18px;">AI Features</div>
+
+        <a class="nav-item ai-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M12 8V4H8" />
+            <rect x="4" y="8" width="16" height="12" rx="2" />
+            <path d="M2 14h2M20 14h2M15 13v2M9 13v2" />
+          </svg>
+          <span>AI Assistant</span>
+          <span class="ai-badge">RAG</span>
+        </a>
+
+        <a class="nav-item">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span>Pengaturan</span>
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="avatar">BA</div>
+        <div>
+          <div class="user-name">Bu Ani</div>
+          <div class="user-role">Warung Sederhana</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- =========== MAIN CONTENT =========== -->
+    <main class="main">
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="topbar-left">
+            <h1>Selamat pagi, Bu Ani</h1>
+            <p>Warung Makan Sederhana — Ringkasan 7 hari terakhir</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="search-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-mute)" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" placeholder="Cari produk, order, atau pelanggan...">
+          </div>
+          <button class="btn icon-only" aria-label="Notifikasi">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </button>
+          <button class="btn primary">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span class="label">Tambah Transaksi</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Metric cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon teal">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--teal-dark)" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23" />
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+            </div>
+            <span class="metric-label">Total Omzet</span>
+          </div>
+          <div class="metric-value">Rp 12.8jt</div>
+          <div class="metric-change up">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
+            +18% dari minggu lalu
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon mint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+            </div>
+            <span class="metric-label">Transaksi</span>
+          </div>
+          <div class="metric-value">284</div>
+          <div class="metric-change up">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
+            +12% dari minggu lalu
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon info">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2">
+                <path d="M3 3v18h18" />
+                <path d="M7 14l4-4 4 4 5-6" />
+              </svg>
+            </div>
+            <span class="metric-label">Margin rata-rata</span>
+          </div>
+          <div class="metric-value">42.3%</div>
+          <div class="metric-change down">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+            −3% dari minggu lalu
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div class="metric-icon warn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2">
+                <path d="M20 7h-4V3H8v4H4l8 10 8-10z" />
+                <path d="M4 21h16" />
+              </svg>
+            </div>
+            <span class="metric-label">Produk terjual</span>
+          </div>
+          <div class="metric-value">512</div>
+          <div class="metric-change up">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
+            +15% dari minggu lalu
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart + Top products -->
+      <div class="content-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <div>
+                <h3>Tren omzet 7 hari</h3>
+                <p>Dari tabel order — dibandingkan target harian</p>
+              </div>
+            </div>
+            <div class="legend-row">
+              <span><span class="legend-dot" style="background: var(--teal);"></span>Omzet</span>
+              <span><span class="legend-dot" style="background: var(--mint);"></span>Target</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="salesChart" role="img" aria-label="Grafik batang omzet harian 7 hari terakhir">Omzet harian:
+              Senin 1.4jt, Selasa 1.6jt, Rabu 1.8jt, Kamis 1.5jt, Jumat 2.3jt, Sabtu 2.5jt, Minggu 1.7jt</canvas>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <div>
+                <h3>Top 5 produk</h3>
+                <p>Berdasarkan profit minggu ini</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="product-row">
+            <div class="product-header">
+              <div>
+                <div class="product-name">Nasi Goreng Spesial</div>
+                <div class="product-meta">112 terjual • margin 58%</div>
+              </div>
+              <div class="product-value">Rp 1.8jt</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 100%;"></div>
+            </div>
+          </div>
+
+          <div class="product-row">
+            <div class="product-header">
+              <div>
+                <div class="product-name">Ayam Bakar Madu</div>
+                <div class="product-meta">87 terjual • margin 52%</div>
+              </div>
+              <div class="product-value">Rp 1.5jt</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 83%;"></div>
+            </div>
+          </div>
+
+          <div class="product-row">
+            <div class="product-header">
+              <div>
+                <div class="product-name">Mie Ayam Bakso</div>
+                <div class="product-meta">96 terjual • margin 45%</div>
+              </div>
+              <div class="product-value">Rp 1.2jt</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill mint" style="width: 67%;"></div>
+            </div>
+          </div>
+
+          <div class="product-row">
+            <div class="product-header">
+              <div>
+                <div class="product-name">Es Teh Manis</div>
+                <div class="product-meta">178 terjual • margin 48%</div>
+              </div>
+              <div class="product-value">Rp 890rb</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill mint" style="width: 49%;"></div>
+            </div>
+          </div>
+
+          <div class="product-row">
+            <div class="product-header">
+              <div>
+                <div class="product-name">Gado-Gado</div>
+                <div class="product-meta">39 terjual • margin 55%</div>
+              </div>
+              <div class="product-value">Rp 720rb</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill mint" style="width: 40%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock alerts + AI Insights -->
+      <div class="content-grid-2col">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <div class="metric-icon warn" style="width: 26px; height: 26px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.5">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+              </div>
+              <div>
+                <h3>Peringatan stok</h3>
+                <p>Dari tabel products (min_level_stock)</p>
+              </div>
+            </div>
+            <span class="badge warn">3 item</span>
+          </div>
+
+          <div class="alert-item critical">
+            <div>
+              <div class="alert-name">Beras (5kg)</div>
+              <div class="alert-detail">Habis dalam 2 hari • SKU: BRS-001</div>
+            </div>
+            <span class="alert-qty">1.2 kg</span>
+          </div>
+          <div class="alert-item warning">
+            <div>
+              <div class="alert-name">Ayam potong</div>
+              <div class="alert-detail">Habis dalam 4 hari • SKU: AYM-003</div>
+            </div>
+            <span class="alert-qty">3 kg</span>
+          </div>
+          <div class="alert-item warning">
+            <div>
+              <div class="alert-name">Gula pasir</div>
+              <div class="alert-detail">Habis dalam 5 hari • SKU: GUL-002</div>
+            </div>
+            <span class="alert-qty">2.5 kg</span>
+          </div>
+        </div>
+
+        <div class="panel dark">
+          <div class="panel-header">
+            <div class="panel-title">
+              <div
+                style="width: 26px; height: 26px; background: rgba(2,195,154,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2.5">
+                  <path d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 3-2 5-3 6H8c-1-1-3-3-3-6a7 7 0 0 1 7-7z" />
+                </svg>
+              </div>
+              <div>
+                <h3>AI Insights</h3>
+                <p>Dihasilkan dari analisis data bisnis Anda</p>
+              </div>
+            </div>
+            <span class="badge mint">BARU</span>
+          </div>
+
+          <div class="insight-item rec">
+            <div class="insight-label">REKOMENDASI</div>
+            <div class="insight-text">Penjualan Jumat–Sabtu 40% lebih tinggi dari weekday. Pertimbangkan promo khusus
+              hari Senin untuk meratakan omzet.</div>
+          </div>
+          <div class="insight-item warn">
+            <div class="insight-label">PERHATIAN</div>
+            <div class="insight-text">Margin Es Teh turun dari 65% ke 48% karena harga gula naik. Saran: naikkan harga
+              Rp 1.000 atau ganti supplier.</div>
+          </div>
+          <div class="insight-item pred">
+            <div class="insight-label">PREDIKSI</div>
+            <div class="insight-text">Berdasarkan tren, omzet bulan ini diprediksi Rp 54jt — 22% lebih tinggi dari bulan
+              lalu.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent orders table -->
+      <div class="panel" style="margin-bottom: 16px;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div>
+              <h3>Pesanan terbaru</h3>
+              <p>Dari tabel order + customer — 5 transaksi terakhir</p>
+            </div>
+          </div>
+          <div class="panel-actions">
+            <button class="btn" style="padding: 5px 10px; font-size: 11px;">Lihat semua</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Pelanggan</th>
+                <th>Tanggal</th>
+                <th>Total</th>
+                <th>Pembayaran</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: var(--teal); font-weight: 500;">#ORD-1284</td>
+                <td>
+                  <div class="customer-cell">
+                    <div class="customer-avatar">SR</div>
+                    <span>Siti Rahayu</span>
+                  </div>
+                </td>
+                <td style="color: var(--text-mute);">21 Apr, 10:34</td>
+                <td style="font-weight: 500;">Rp 85.000</td>
+                <td>QRIS</td>
+                <td><span class="badge success">Selesai</span></td>
+              </tr>
+              <tr>
+                <td style="color: var(--teal); font-weight: 500;">#ORD-1283</td>
+                <td>
+                  <div class="customer-cell">
+                    <div class="customer-avatar">BD</div>
+                    <span>Budi Darmawan</span>
+                  </div>
+                </td>
+                <td style="color: var(--text-mute);">21 Apr, 09:58</td>
+                <td style="font-weight: 500;">Rp 42.000</td>
+                <td>Tunai</td>
+                <td><span class="badge success">Selesai</span></td>
+              </tr>
+              <tr>
+                <td style="color: var(--teal); font-weight: 500;">#ORD-1282</td>
+                <td>
+                  <div class="customer-cell">
+                    <div class="customer-avatar">RW</div>
+                    <span>Rina Wijaya</span>
+                  </div>
+                </td>
+                <td style="color: var(--text-mute);">21 Apr, 09:12</td>
+                <td style="font-weight: 500;">Rp 125.000</td>
+                <td>Transfer</td>
+                <td><span class="badge info">Diproses</span></td>
+              </tr>
+              <tr>
+                <td style="color: var(--teal); font-weight: 500;">#ORD-1281</td>
+                <td>
+                  <div class="customer-cell">
+                    <div class="customer-avatar">AS</div>
+                    <span>Agus Setiawan</span>
+                  </div>
+                </td>
+                <td style="color: var(--text-mute);">21 Apr, 08:45</td>
+                <td style="font-weight: 500;">Rp 67.500</td>
+                <td>QRIS</td>
+                <td><span class="badge success">Selesai</span></td>
+              </tr>
+              <tr>
+                <td style="color: var(--teal); font-weight: 500;">#ORD-1280</td>
+                <td>
+                  <div class="customer-cell">
+                    <div class="customer-avatar">DM</div>
+                    <span>Dewi Maharani</span>
+                  </div>
+                </td>
+                <td style="color: var(--text-mute);">20 Apr, 19:22</td>
+                <td style="font-weight: 500;">Rp 98.000</td>
+                <td>Tunai</td>
+                <td><span class="badge success">Selesai</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Chat AI -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <div
+              style="width: 26px; height: 26px; background: var(--teal-light); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3>Tanya AI</h3>
+              <p>Didukung teknologi RAG — menjawab berbasis data bisnis Anda</p>
+            </div>
+          </div>
+          <span class="badge teal">Bertenaga RAG</span>
+        </div>
+
+        <div class="chat-messages">
+          <div class="msg user">Produk mana yang paling untung minggu ini?</div>
+
+          <div class="ai-msg-wrapper">
+            <div class="ai-avatar">AI</div>
+            <div class="msg ai">
+              Produk paling untung minggu ini adalah <span class="highlight">Nasi Goreng Spesial</span> dengan total
+              profit Rp 1.8 juta (margin 58%). Disusul Ayam Bakar Madu (Rp 1.5jt, margin 52%). Nasi Goreng Spesial
+              menyumbang <span class="highlight">24% dari total profit</span> warung minggu ini.
+            </div>
+          </div>
+
+          <div class="msg user">Kalau saya naikkan harga Nasi Goreng jadi Rp 18rb, dampaknya bagaimana?</div>
+
+          <div class="ai-msg-wrapper">
+            <div class="ai-avatar">AI</div>
+            <div class="msg ai">
+              Dari data historis Ibu, kenaikan harga 13% berpotensi menurunkan volume ~8%. Tapi karena margin naik
+              signifikan, <span class="highlight">profit diproyeksi naik 18%</span>. Saran: coba A/B test 2 minggu dulu,
+              perhatikan reaksi pelanggan loyal.
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-input">
+          <input type="text" placeholder="Tanya apa saja tentang bisnis Anda...">
+          <button class="btn primary">Kirim</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('open');
+    }
+
+    const ctx = document.getElementById('salesChart');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+        datasets: [
+          {
+            label: 'Omzet',
+            data: [1400, 1600, 1800, 1500, 2300, 2500, 1700],
+            backgroundColor: '#028090',
+            borderRadius: 4,
+            barPercentage: 0.65,
+          },
+          {
+            label: 'Target',
+            data: [2000, 2000, 2000, 2000, 2000, 2000, 2000],
+            type: 'line',
+            borderColor: '#02C39A',
+            backgroundColor: '#02C39A',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            pointRadius: 0,
+            fill: false,
+            tension: 0,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => 'Rp ' + ctx.parsed.y.toLocaleString('id-ID') + 'rb'
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#7B9198', font: { size: 11 } }
+          },
+          y: {
+            grid: { color: '#E4ECED' },
+            ticks: {
+              color: '#7B9198',
+              font: { size: 11 },
+              callback: (v) => 'Rp ' + (v / 1000).toFixed(1) + 'jt'
+            },
+            beginAtZero: true,
+            max: 3000,
+          }
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
